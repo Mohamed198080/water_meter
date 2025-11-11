@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تسجيل بيانات عدادات الكهرباء</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        .form-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1, h2 {
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+            background-color: #f8f9fa;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .location-btn {
+            background-color: var(--secondary);
+            margin-top: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .barcode-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .barcode-btn {
+            background-color: #9b59b6;
+            margin-bottom: 10px;
+        }
+        
+        .barcode-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .coordinates {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .coordinates input {
+            flex: 1;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .image-preview-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .coordinates {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>نظام تسجيل بيانات عدادات الكهرباء</h1>
+        </header>
+        
+        <div class="form-section">
+            <h2>بيانات العداد</h2>
+            
+            <div class="form-group">
+                <label for="meterNumber">رقم العداد *</label>
+                <input type="text" id="meterNumber" required>
+                
+                <div class="barcode-section">
+                    <button type="button" class="btn barcode-btn" id="scanBarcode">مسح باركود العداد</button>
+                    <p>أو أدخل الرقم يدويًا</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="meterType">نوع العداد *</label>
+                <select id="meterType" required>
+                    <option value="">اختر نوع العداد</option>
+                    <option value="ذكى">ذكى</option>
+                    <option value="ميكانيكى">ميكانيكى</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="meterBrand">ماركة العداد *</label>
+                <select id="meterBrand" required>
+                    <option value="">اختر ماركة العداد</option>
+                    <option value="هيدروس">هيدروس</option>
+                    <option value="سنسوس">سنسوس</option>
+                    <option value="انتجرا">انتجرا</option>
+                    <option value="wadad">wadad</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>بيانات المحبس والصندوق</h2>
+            
+            <div class="form-group">
+                <label for="valveType">نوع المحبس *</label>
+                <select id="valveType" required>
+                    <option value="">اختر نوع المحبس</option>
+                    <option value="بوقاتى">بوقاتى</option>
+                    <option value="عادى">عادى</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="valveCondition">حالة المحبس *</label>
+                <select id="valveCondition" required>
+                    <option value="">اختر حالة المحبس</option>
+                    <option value="يحتاج تغيير">يحتاج تغيير</option>
+                    <option value="سليم">سليم</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="boxCondition">حالة الصندوق *</label>
+                <select id="boxCondition" required>
+                    <option value="">اختر حالة الصندوق</option>
+                    <option value="يحتاج تغيير">يحتاج تغيير</option>
+                    <option value="سليم">سليم</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>بيانات العقار</h2>
+            
+            <div class="form-group">
+                <label for="pieceNumber">رقم القطعة *</label>
+                <input type="text" id="pieceNumber" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="propertyType">نوع العقار *</label>
+                <select id="propertyType" required>
+                    <option value="">اختر نوع العقار</option>
+                    <option value="سكنى">سكنى</option>
+                    <option value="تجارى">تجارى</option>
+                    <option value="حكومى">حكومى</option>
+                    <option value="VIP">VIP</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="propertyCondition">حالة العقار *</label>
+                <select id="propertyCondition" required>
+                    <option value="">اختر حالة العقار</option>
+                    <option value="عقار قائم">عقار قائم</option>
+                    <option value="ارض فضاء">ارض فضاء</option>
+                    <option value="عقار مهدوم">عقار مهدوم</option>
+                    <option value="عقار تحت الانشاء">عقار تحت الانشاء</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="hasViolation">يوجد تعدى *</label>
+                <select id="hasViolation" required>
+                    <option value="">اختر حالة التعدي</option>
+                    <option value="نعم">نعم</option>
+                    <option value="لا">لا</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="districtName">اسم الحى *</label>
+                <input type="text" id="districtName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="electricityMetersCount">عدد عدادات الكهرباء *</label>
+                <input type="number" id="electricityMetersCount" min="1" required>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>الموقع الجغرافي</h2>
+            
+            <div class="form-group">
+                <button type="button" class="btn location-btn" id="getLocation">الحصول على الإحداثيات</button>
+                
+                <div class="coordinates">
+                    <div>
+                        <label for="latitude">خط العرض (Latitude) *</label>
+                        <input type="text" id="latitude" required readonly>
+                    </div>
+                    
+                    <div>
+                        <label for="longitude">خط الطول (Longitude) *</label>
+                        <input type="text" id="longitude" required readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>رفع الصور</h2>
+            
+            <div class="form-group">
+                <label>صورة العداد</label>
+                <div class="file-upload" id="meterImageUpload">
+                    <p>انقر لرفع صورة العداد</p>
+                    <input type="file" id="meterImage" accept="image/*" class="hidden">
+                </div>
+                <div id="meterImagePreviewContainer"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>صورة رقم القطعة</label>
+                <div class="file-upload" id="pieceNumberImageUpload">
+                    <p>انقر لرفع صورة رقم القطعة</p>
+                    <input type="file" id="pieceNumberImage" accept="image/*" class="hidden">
+                </div>
+                <div id="pieceNumberImagePreviewContainer"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>صورة العقار</label>
+                <div class="file-upload" id="propertyImageUpload">
+                    <p>انقر لرفع صورة العقار</p>
+                    <input type="file" id="propertyImage" accept="image/*" class="hidden">
+                </div>
+                <div id="propertyImagePreviewContainer"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>صورة عدد عدادات الكهرباء</label>
+                <div class="file-upload" id="metersCountImageUpload">
+                    <p>انقر لرفع صورة عدد عدادات الكهرباء</p>
+                    <input type="file" id="metersCountImage" accept="image/*" class="hidden">
+                </div>
+                <div id="metersCountImagePreviewContainer"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>صورة المحبس</label>
+                <div class="file-upload" id="valveImageUpload">
+                    <p>انقر لرفع صورة المحبس</p>
+                    <input type="file" id="valveImage" accept="image/*" class="hidden">
+                </div>
+                <div id="valveImagePreviewContainer"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>صورة الصندوق</label>
+                <div class="file-upload" id="boxImageUpload">
+                    <p>انقر لرفع صورة الصندوق</p>
+                    <input type="file" id="boxImage" accept="image/*" class="hidden">
+                </div>
+                <div id="boxImagePreviewContainer"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>صورة حالة التعدي</label>
+                <div class="file-upload" id="violationImageUpload">
+                    <p>انقر لرفع صورة حالة التعدي</p>
+                    <input type="file" id="violationImage" accept="image/*" class="hidden">
+                </div>
+                <div id="violationImagePreviewContainer"></div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>بيانات الفني</h2>
+            
+            <div class="form-group">
+                <label for="technicianName">اسم الفني *</label>
+                <input type="text" id="technicianName" required>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <button class="btn btn-success" id="submitBtn" style="width: 100%;">تسجيل البيانات</button>
+            <button class="btn btn-danger" id="resetBtn" style="width: 100%; margin-top: 10px;">مسح النموذج</button>
+            
+            <div class="progress-bar hidden" id="progressBar">
+                <div class="progress" id="progress"></div>
+            </div>
+        </div>
+        
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // API Key لـ ImgBB
+        const IMGBB_API_KEY = '943880b0a24534cdb564d3ad6ea8f3a8';
+        
+        // عناصر DOM
+        const meterNumberInput = document.getElementById('meterNumber');
+        const scanBarcodeBtn = document.getElementById('scanBarcode');
+        const getLocationBtn = document.getElementById('getLocation');
+        const latitudeInput = document.getElementById('latitude');
+        const longitudeInput = document.getElementById('longitude');
+        const submitBtn = document.getElementById('submitBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const messageDiv = document.getElementById('message');
+        const progressBar = document.getElementById('progressBar');
+        const progress = document.getElementById('progress');
+        
+        // إعدادات رفع الملفات
+        const fileInputs = [
+            { 
+                inputId: 'meterImage', 
+                uploadId: 'meterImageUpload', 
+                previewId: 'meterImagePreviewContainer',
+                fieldName: 'meterImageUrl'
+            },
+            { 
+                inputId: 'pieceNumberImage', 
+                uploadId: 'pieceNumberImageUpload', 
+                previewId: 'pieceNumberImagePreviewContainer',
+                fieldName: 'pieceNumberImageUrl'
+            },
+            { 
+                inputId: 'propertyImage', 
+                uploadId: 'propertyImageUpload', 
+                previewId: 'propertyImagePreviewContainer',
+                fieldName: 'propertyImageUrl'
+            },
+            { 
+                inputId: 'metersCountImage', 
+                uploadId: 'metersCountImageUpload', 
+                previewId: 'metersCountImagePreviewContainer',
+                fieldName: 'metersCountImageUrl'
+            },
+            { 
+                inputId: 'valveImage', 
+                uploadId: 'valveImageUpload', 
+                previewId: 'valveImagePreviewContainer',
+                fieldName: 'valveImageUrl'
+            },
+            { 
+                inputId: 'boxImage', 
+                uploadId: 'boxImageUpload', 
+                previewId: 'boxImagePreviewContainer',
+                fieldName: 'boxImageUrl'
+            },
+            { 
+                inputId: 'violationImage', 
+                uploadId: 'violationImageUpload', 
+                previewId: 'violationImagePreviewContainer',
+                fieldName: 'violationImageUrl'
+            }
+        ];
+        
+        // تهيئة رفع الملفات
+        fileInputs.forEach(file => {
+            const input = document.getElementById(file.inputId);
+            const upload = document.getElementById(file.uploadId);
+            const previewContainer = document.getElementById(file.previewId);
+            
+            upload.addEventListener('click', () => input.click());
+            
+            input.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // إنشاء عنصر المعاينة مع زر الحذف
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'image-preview-container';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'preview-image';
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-image';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.onclick = function() {
+                            previewContainer.removeChild(previewDiv);
+                            input.value = '';
+                        };
+                        
+                        previewDiv.appendChild(img);
+                        previewDiv.appendChild(removeBtn);
+                        previewContainer.innerHTML = '';
+                        previewContainer.appendChild(previewDiv);
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+        
+        // الحصول على الموقع الجغرافي
+        getLocationBtn.addEventListener('click', function() {
+            if (navigator.geolocation) {
+                getLocationBtn.disabled = true;
+                getLocationBtn.textContent = 'جاري الحصول على الموقع...';
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        latitudeInput.value = position.coords.latitude.toFixed(6);
+                        longitudeInput.value = position.coords.longitude.toFixed(6);
+                        showMessage('تم الحصول على الإحداثيات بنجاح', 'success');
+                        
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.textContent = 'الحصول على الإحداثيات';
+                    },
+                    function(error) {
+                        let errorMessage;
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = "تم رفض طلب الحصول على الموقع الجغرافي";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = "معلومات الموقع غير متاحة";
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = "انتهت مهلة طلب الحصول على الموقع";
+                                break;
+                            default:
+                                errorMessage = "حدث خطأ غير معروف أثناء الحصول على الموقع";
+                        }
+                        showMessage(errorMessage, 'error');
+                        
+                        getLocationBtn.disabled = false;
+                        getLocationBtn.textContent = 'الحصول على الإحداثيات';
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                showMessage('المتصفح لا يدعم الحصول على الموقع الجغرافي', 'error');
+            }
+        });
+        
+        // مسح الباركود (محاكاة)
+        scanBarcodeBtn.addEventListener('click', function() {
+            // في التطبيق الحقيقي، سيتم استخدام مكتبة لمسح الباركود
+            const simulatedBarcode = "MTR" + Math.floor(100000 + Math.random() * 900000);
+            meterNumberInput.value = simulatedBarcode;
+            showMessage('تم مسح الباركود بنجاح: ' + simulatedBarcode, 'success');
+        });
+        
+        // رفع الصورة إلى ImgBB
+        async function uploadImageToImgBB(base64Data, imageName) {
+            try {
+                const formData = new FormData();
+                const blob = await fetch(base64Data).then(r => r.blob());
+                formData.append('image', blob);
+                
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    return result.data.url;
+                } else {
+                    throw new Error(result.error.message || 'فشل في رفع الصورة');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                throw error;
+            }
+        }
+        
+        // جمع البيانات من النموذج
+        async function collectFormData() {
+            const formData = {
+                meterNumber: document.getElementById('meterNumber').value,
+                meterType: document.getElementById('meterType').value,
+                meterBrand: document.getElementById('meterBrand').value,
+                valveType: document.getElementById('valveType').value,
+                valveCondition: document.getElementById('valveCondition').value,
+                boxCondition: document.getElementById('boxCondition').value,
+                pieceNumber: document.getElementById('pieceNumber').value,
+                propertyType: document.getElementById('propertyType').value,
+                propertyCondition: document.getElementById('propertyCondition').value,
+                hasViolation: document.getElementById('hasViolation').value,
+                districtName: document.getElementById('districtName').value,
+                electricityMetersCount: document.getElementById('electricityMetersCount').value,
+                latitude: document.getElementById('latitude').value,
+                longitude: document.getElementById('longitude').value,
+                technicianName: document.getElementById('technicianName').value,
+                timestamp: new Date().toISOString()
+            };
+
+            return formData;
+        }
+        
+        // تحويل الصور إلى base64
+        function getImageBase64(fileInput) {
+            return new Promise((resolve) => {
+                if (fileInput.files && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        resolve(e.target.result);
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
+                    resolve(null);
+                }
+            });
+        }
+        
+        // رفع جميع الصور
+        async function uploadAllImages() {
+            const imageUrls = {};
+            const imageFields = [
+                { inputId: 'meterImage', name: 'meterImageUrl' },
+                { inputId: 'pieceNumberImage', name: 'pieceNumberImageUrl' },
+                { inputId: 'propertyImage', name: 'propertyImageUrl' },
+                { inputId: 'metersCountImage', name: 'metersCountImageUrl' },
+                { inputId: 'valveImage', name: 'valveImageUrl' },
+                { inputId: 'boxImage', name: 'boxImageUrl' },
+                { inputId: 'violationImage', name: 'violationImageUrl' }
+            ];
+            
+            let uploadedCount = 0;
+            const totalImages = imageFields.filter(field => {
+                const input = document.getElementById(field.inputId);
+                return input.files && input.files[0];
+            }).length;
+            
+            if (totalImages === 0) return imageUrls;
+            
+            for (const field of imageFields) {
+                const input = document.getElementById(field.inputId);
+                if (input.files && input.files[0]) {
+                    try {
+                        const base64Data = await getImageBase64(input);
+                        const imageUrl = await uploadImageToImgBB(base64Data, field.name);
+                        imageUrls[field.name] = imageUrl;
+                        
+                        uploadedCount++;
+                        progress.style.width = `${30 + (uploadedCount / totalImages) * 50}%`;
+                    } catch (error) {
+                        console.error(`Error uploading ${field.name}:`, error);
+                        imageUrls[field.name] = '';
+                    }
+                }
+            }
+            
+            return imageUrls;
+        }
+        
+        // إرسال البيانات إلى Google Sheets
+        async function submitToGoogleSheets(formData, imageUrls) {
+            // دمج البيانات
+            const finalData = { ...formData, ...imageUrls };
+            
+            // هنا سيتم إرسال البيانات إلى Google Apps Script
+            // هذا جزء محاكاة - استبدله برابط Google Apps Script الفعلي
+            console.log('Data to be submitted:', finalData);
+            
+            // محاكاة الإرسال الناجح
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ success: true, data: finalData });
+                }, 1000);
+            });
+            
+            // للاستخدام الفعلي، استخدم:
+            /*
+            const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
+                method: 'POST',
+                body: JSON.stringify(finalData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            return await response.json();
+            */
+        }
+        
+        // إرسال البيانات
+        submitBtn.addEventListener('click', async function() {
+            if (validateForm()) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'جاري التسجيل...';
+                document.body.classList.add('loading');
+                progressBar.classList.remove('hidden');
+                progress.style.width = '10%';
+                
+                try {
+                    // جمع البيانات النصية
+                    progress.style.width = '20%';
+                    const formData = await collectFormData();
+                    
+                    // رفع الصور
+                    progress.style.width = '30%';
+                    const imageUrls = await uploadAllImages();
+                    
+                    // إرسال البيانات النهائية
+                    progress.style.width = '90%';
+                    const result = await submitToGoogleSheets(formData, imageUrls);
+                    
+                    progress.style.width = '100%';
+                    
+                    if (result.success) {
+                        showMessage('تم تسجيل البيانات بنجاح!', 'success');
+                        resetForm();
+                    } else {
+                        showMessage('حدث خطأ أثناء التسجيل: ' + (result.error || 'غير معروف'), 'error');
+                    }
+                } catch (error) {
+                    showMessage('حدث خطأ: ' + error.message, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'تسجيل البيانات';
+                    document.body.classList.remove('loading');
+                    setTimeout(() => {
+                        progressBar.classList.add('hidden');
+                        progress.style.width = '0%';
+                    }, 2000);
+                }
+            }
+        });
+        
+        // مسح النموذج
+        resetBtn.addEventListener('click', function() {
+            resetForm();
+            showMessage('تم مسح النموذج', 'success');
+        });
+        
+        // التحقق من صحة النموذج
+        function validateForm() {
+            const requiredFields = [
+                'meterNumber', 'meterType', 'meterBrand', 'valveType', 'valveCondition',
+                'boxCondition', 'pieceNumber', 'propertyType', 'propertyCondition',
+                'hasViolation', 'districtName', 'electricityMetersCount', 'latitude',
+                'longitude', 'technicianName'
+            ];
+            
+            for (const fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    showMessage(`يرجى ملء حقل ${field.previousElementSibling.textContent}`, 'error');
+                    field.focus();
+                    return false;
+                }
+            }
+            
+            // التحقق من صحة الإحداثيات
+            const lat = parseFloat(latitudeInput.value);
+            const lng = parseFloat(longitudeInput.value);
+            
+            if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                showMessage('يرجى التأكد من صحة الإحداثيات الجغرافية', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // مسح النموذج
+        function resetForm() {
+            document.querySelectorAll('input, select').forEach(element => {
+                if (element.type !== 'button' && element.id !== 'scanBarcode' && element.id !== 'getLocation') {
+                    element.value = '';
+                }
+            });
+            
+            document.querySelectorAll('[id$="PreviewContainer"]').forEach(container => {
+                container.innerHTML = '';
+            });
+            
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.value = '';
+            });
+        }
+        
+        // عرض الرسائل
+        function showMessage(message, type) {
+            messageDiv.innerHTML = `<div class="${type === 'success' ? 'success-message' : 'error-message'}">${message}</div>`;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+        
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            showMessage('مرحباً بك في نظام تسجيل بيانات العدادات. يرجى ملء جميع الحقول المطلوبة.', 'success');
+        });
+    </script>
+</body>
+</html>
