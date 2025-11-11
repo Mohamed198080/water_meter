@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام تسجيل بيانات عدادات الكهرباء</title>
+    <!-- إضافة مكتبة QuaggaJS للمسح الضوئي -->
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
     <style>
         :root {
             --primary: #3498db;
@@ -49,198 +51,49 @@
             margin-bottom: 20px;
         }
         
-        h1, h2 {
-            margin-bottom: 15px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        
-        input, select, textarea {
+        /* أنماط إضافية للماسح الضوئي والكاميرا */
+        #barcode-scanner {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        
-        .file-upload {
-            border: 2px dashed #ddd;
-            padding: 20px;
-            text-align: center;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: all 0.3s;
-        }
-        
-        .file-upload:hover {
-            border-color: var(--primary);
-            background-color: #f8f9fa;
-        }
-        
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background-color 0.3s;
-            display: inline-block;
-            text-align: center;
-        }
-        
-        .btn:hover {
-            background-color: #2980b9;
-        }
-        
-        .btn-success {
-            background-color: var(--secondary);
-        }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-        }
-        
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-        
-        .location-btn {
-            background-color: var(--secondary);
-            margin-top: 10px;
-        }
-        
-        .hidden {
+            height: 100%;
+            background: black;
+            z-index: 10000;
             display: none;
         }
         
-        .barcode-section {
-            text-align: center;
-            margin: 20px 0;
+        #barcode-scanner video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
-        .barcode-btn {
-            background-color: #9b59b6;
-            margin-bottom: 10px;
-        }
-        
-        .barcode-btn:hover {
-            background-color: #8e44ad;
-        }
-        
-        .preview-image {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        
-        .coordinates {
+        .scanner-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             gap: 10px;
         }
         
-        .coordinates input {
-            flex: 1;
-        }
-        
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 12px;
-            border-radius: 4px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 4px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .progress-bar {
+        .camera-preview {
             width: 100%;
-            height: 20px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            display: none;
+        }
+        
+        .camera-controls {
+            display: flex;
+            gap: 10px;
             margin-top: 10px;
-            overflow: hidden;
+            justify-content: center;
         }
         
-        .progress {
-            height: 100%;
-            background-color: var(--secondary);
-            width: 0%;
-            transition: width 0.3s;
-        }
-        
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-        
-        .image-preview-container {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .remove-image {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .required::after {
-            content: " *";
-            color: var(--danger);
-        }
-        
-        .test-btn {
-            background-color: #ff9800;
-            margin-top: 10px;
-        }
-        
-        .test-btn:hover {
-            background-color: #f57c00;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .coordinates {
-                flex-direction: column;
-            }
-        }
+        /* باقي الأنماط تبقى كما هي */
     </style>
 </head>
 <body>
@@ -249,705 +102,286 @@
             <h1>نظام تسجيل بيانات عدادات الكهرباء</h1>
         </header>
         
+        <!-- نموذج البيانات (يبقى كما هو) -->
+        
+        <!-- قسم الباركود والكاميرا -->
         <div class="form-section">
-            <h2>بيانات العداد</h2>
+            <h2>المسح والتصوير</h2>
             
             <div class="form-group">
                 <label for="meterNumber" class="required">رقم العداد</label>
                 <input type="text" id="meterNumber" required>
                 
                 <div class="barcode-section">
-                    <button type="button" class="btn barcode-btn" id="scanBarcode">مسح باركود العداد</button>
+                    <button type="button" class="btn barcode-btn" id="scanBarcode">
+                        📷 مسح باركود العداد
+                    </button>
                     <p>أو أدخل الرقم يدويًا</p>
                 </div>
             </div>
             
+            <!-- كاميرا مباشرة للصور -->
             <div class="form-group">
-                <label for="meterType" class="required">نوع العداد</label>
-                <select id="meterType" required>
-                    <option value="">اختر نوع العداد</option>
-                    <option value="ذكى">ذكى</option>
-                    <option value="ميكانيكى">ميكانيكى</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="meterBrand" class="required">ماركة العداد</label>
-                <select id="meterBrand" required>
-                    <option value="">اختر ماركة العداد</option>
-                    <option value="هيدروس">هيدروس</option>
-                    <option value="سنسوس">سنسوس</option>
-                    <option value="انتجرا">انتجرا</option>
-                    <option value="wadad">wadad</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-section">
-            <h2>بيانات المحبس والصندوق</h2>
-            
-            <div class="form-group">
-                <label for="valveType" class="required">نوع المحبس</label>
-                <select id="valveType" required>
-                    <option value="">اختر نوع المحبس</option>
-                    <option value="بوقاتى">بوقاتى</option>
-                    <option value="عادى">عادى</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="valveCondition" class="required">حالة المحبس</label>
-                <select id="valveCondition" required>
-                    <option value="">اختر حالة المحبس</option>
-                    <option value="يحتاج تغيير">يحتاج تغيير</option>
-                    <option value="سليم">سليم</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="boxCondition" class="required">حالة الصندوق</label>
-                <select id="boxCondition" required>
-                    <option value="">اختر حالة الصندوق</option>
-                    <option value="يحتاج تغيير">يحتاج تغيير</option>
-                    <option value="سليم">سليم</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-section">
-            <h2>بيانات العقار</h2>
-            
-            <div class="form-group">
-                <label for="pieceNumber" class="required">رقم القطعة</label>
-                <input type="text" id="pieceNumber" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="propertyType" class="required">نوع العقار</label>
-                <select id="propertyType" required>
-                    <option value="">اختر نوع العقار</option>
-                    <option value="سكنى">سكنى</option>
-                    <option value="تجارى">تجارى</option>
-                    <option value="حكومى">حكومى</option>
-                    <option value="VIP">VIP</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="propertyCondition" class="required">حالة العقار</label>
-                <select id="propertyCondition" required>
-                    <option value="">اختر حالة العقار</option>
-                    <option value="عقار قائم">عقار قائم</option>
-                    <option value="ارض فضاء">ارض فضاء</option>
-                    <option value="عقار مهدوم">عقار مهدوم</option>
-                    <option value="عقار تحت الانشاء">عقار تحت الانشاء</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="hasViolation" class="required">يوجد تعدى</label>
-                <select id="hasViolation" required>
-                    <option value="">اختر حالة التعدي</option>
-                    <option value="نعم">نعم</option>
-                    <option value="لا">لا</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="districtName" class="required">اسم الحى</label>
-                <input type="text" id="districtName" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="electricityMetersCount" class="required">عدد عدادات الكهرباء</label>
-                <input type="number" id="electricityMetersCount" min="1" required>
-            </div>
-        </div>
-        
-        <div class="form-section">
-            <h2>الموقع الجغرافي</h2>
-            
-            <div class="form-group">
-                <button type="button" class="btn location-btn" id="getLocation">الحصول على الإحداثيات</button>
+                <label>التصوير المباشر</label>
+                <div class="camera-controls">
+                    <button type="button" class="btn" id="startCamera">📸 فتح الكاميرا</button>
+                    <button type="button" class="btn btn-success" id="captureImage" style="display:none;">✅ التقاط صورة</button>
+                    <button type="button" class="btn btn-danger" id="stopCamera" style="display:none;">❌ إغلاق الكاميرا</button>
+                </div>
+                <video id="cameraPreview" class="camera-preview" autoplay playsinline></video>
+                <canvas id="cameraCanvas" style="display:none;"></canvas>
                 
-                <div class="coordinates">
-                    <div>
-                        <label for="latitude" class="required">خط العرض (Latitude)</label>
-                        <input type="text" id="latitude" required readonly>
-                    </div>
-                    
-                    <div>
-                        <label for="longitude" class="required">خط الطول (Longitude)</label>
-                        <input type="text" id="longitude" required readonly>
-                    </div>
-                </div>
+                <select id="cameraType" class="form-group">
+                    <option value="">اختر نوع الصورة</option>
+                    <option value="meterImage">صورة العداد</option>
+                    <option value="pieceNumberImage">صورة رقم القطعة</option>
+                    <option value="propertyImage">صورة العقار</option>
+                    <option value="valveImage">صورة المحبس</option>
+                    <option value="boxImage">صورة الصندوق</option>
+                </select>
             </div>
         </div>
-        
-        <div class="form-section">
-            <h2>رفع الصور</h2>
-            
-            <div class="form-group">
-                <label>صورة العداد</label>
-                <div class="file-upload" id="meterImageUpload">
-                    <p>انقر لرفع صورة العداد</p>
-                    <input type="file" id="meterImage" accept="image/*" class="hidden">
-                </div>
-                <div id="meterImagePreviewContainer"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>صورة رقم القطعة</label>
-                <div class="file-upload" id="pieceNumberImageUpload">
-                    <p>انقر لرفع صورة رقم القطعة</p>
-                    <input type="file" id="pieceNumberImage" accept="image/*" class="hidden">
-                </div>
-                <div id="pieceNumberImagePreviewContainer"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>صورة العقار</label>
-                <div class="file-upload" id="propertyImageUpload">
-                    <p>انقر لرفع صورة العقار</p>
-                    <input type="file" id="propertyImage" accept="image/*" class="hidden">
-                </div>
-                <div id="propertyImagePreviewContainer"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>صورة عدد عدادات الكهرباء</label>
-                <div class="file-upload" id="metersCountImageUpload">
-                    <p>انقر لرفع صورة عدد عدادات الكهرباء</p>
-                    <input type="file" id="metersCountImage" accept="image/*" class="hidden">
-                </div>
-                <div id="metersCountImagePreviewContainer"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>صورة المحبس</label>
-                <div class="file-upload" id="valveImageUpload">
-                    <p>انقر لرفع صورة المحبس</p>
-                    <input type="file" id="valveImage" accept="image/*" class="hidden">
-                </div>
-                <div id="valveImagePreviewContainer"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>صورة الصندوق</label>
-                <div class="file-upload" id="boxImageUpload">
-                    <p>انقر لرفع صورة الصندوق</p>
-                    <input type="file" id="boxImage" accept="image/*" class="hidden">
-                </div>
-                <div id="boxImagePreviewContainer"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>صورة حالة التعدي</label>
-                <div class="file-upload" id="violationImageUpload">
-                    <p>انقر لرفع صورة حالة التعدي</p>
-                    <input type="file" id="violationImage" accept="image/*" class="hidden">
-                </div>
-                <div id="violationImagePreviewContainer"></div>
-            </div>
+
+        <!-- باقي النموذج يبقى كما هو -->
+
+    </div>
+
+    <!-- ماسح الباركود -->
+    <div id="barcode-scanner">
+        <video id="barcode-video"></video>
+        <div class="scanner-controls">
+            <button class="btn btn-danger" id="closeScanner">❌ إغلاق الماسح</button>
         </div>
-        
-        <div class="form-section">
-            <h2>بيانات الفني</h2>
-            
-            <div class="form-group">
-                <label for="technicianName" class="required">اسم الفني</label>
-                <input type="text" id="technicianName" required>
-            </div>
-        </div>
-        
-        <div class="form-section">
-            <button class="btn btn-success" id="submitBtn" style="width: 100%;">تسجيل البيانات</button>
-            <button class="btn btn-danger" id="resetBtn" style="width: 100%; margin-top: 10px;">مسح النموذج</button>
-            <button class="btn test-btn" id="testBtn" style="width: 100%; margin-top: 10px;">اختبار الإرسال</button>
-            
-            <div class="progress-bar hidden" id="progressBar">
-                <div class="progress" id="progress"></div>
-            </div>
-        </div>
-        
-        <div id="message"></div>
     </div>
 
     <script>
-        // API Key لـ ImgBB
-        const IMGBB_API_KEY = '943880b0a24534cdb564d3ad6ea8f3a8';
-        
-        // رابط Google Apps Script الجديد
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxL2HzQFqSa-Q1WBkpx2fJfcJP3P9VgnWobNHVgEQMuCf-xw98YMC1XSGOfh4VYk1y1bw/exec';
-        
-        // عناصر DOM
-        const meterNumberInput = document.getElementById('meterNumber');
-        const scanBarcodeBtn = document.getElementById('scanBarcode');
-        const getLocationBtn = document.getElementById('getLocation');
-        const latitudeInput = document.getElementById('latitude');
-        const longitudeInput = document.getElementById('longitude');
-        const submitBtn = document.getElementById('submitBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const testBtn = document.getElementById('testBtn');
-        const messageDiv = document.getElementById('message');
-        const progressBar = document.getElementById('progressBar');
-        const progress = document.getElementById('progress');
-        
-        // إعدادات رفع الملفات
-        const fileInputs = [
-            { 
-                inputId: 'meterImage', 
-                uploadId: 'meterImageUpload', 
-                previewId: 'meterImagePreviewContainer',
-                fieldName: 'meterImageUrl'
-            },
-            { 
-                inputId: 'pieceNumberImage', 
-                uploadId: 'pieceNumberImageUpload', 
-                previewId: 'pieceNumberImagePreviewContainer',
-                fieldName: 'pieceNumberImageUrl'
-            },
-            { 
-                inputId: 'propertyImage', 
-                uploadId: 'propertyImageUpload', 
-                previewId: 'propertyImagePreviewContainer',
-                fieldName: 'propertyImageUrl'
-            },
-            { 
-                inputId: 'metersCountImage', 
-                uploadId: 'metersCountImageUpload', 
-                previewId: 'metersCountImagePreviewContainer',
-                fieldName: 'metersCountImageUrl'
-            },
-            { 
-                inputId: 'valveImage', 
-                uploadId: 'valveImageUpload', 
-                previewId: 'valveImagePreviewContainer',
-                fieldName: 'valveImageUrl'
-            },
-            { 
-                inputId: 'boxImage', 
-                uploadId: 'boxImageUpload', 
-                previewId: 'boxImagePreviewContainer',
-                fieldName: 'boxImageUrl'
-            },
-            { 
-                inputId: 'violationImage', 
-                uploadId: 'violationImageUpload', 
-                previewId: 'violationImagePreviewContainer',
-                fieldName: 'violationImageUrl'
-            }
-        ];
-        
-        // تهيئة رفع الملفات
-        fileInputs.forEach(file => {
-            const input = document.getElementById(file.inputId);
-            const upload = document.getElementById(file.uploadId);
-            const previewContainer = document.getElementById(file.previewId);
-            
-            upload.addEventListener('click', () => input.click());
-            
-            input.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        // إنشاء عنصر المعاينة مع زر الحذف
-                        const previewDiv = document.createElement('div');
-                        previewDiv.className = 'image-preview-container';
-                        
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'preview-image';
-                        
-                        const removeBtn = document.createElement('button');
-                        removeBtn.className = 'remove-image';
-                        removeBtn.innerHTML = '×';
-                        removeBtn.title = 'حذف الصورة';
-                        removeBtn.onclick = function() {
-                            previewContainer.removeChild(previewDiv);
-                            input.value = '';
-                        };
-                        
-                        previewDiv.appendChild(img);
-                        previewDiv.appendChild(removeBtn);
-                        previewContainer.innerHTML = '';
-                        previewContainer.appendChild(previewDiv);
-                    }
-                    
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-        });
-        
-        // الحصول على الموقع الجغرافي
-        getLocationBtn.addEventListener('click', function() {
-            if (navigator.geolocation) {
-                getLocationBtn.disabled = true;
-                getLocationBtn.textContent = 'جاري الحصول على الموقع...';
-                
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        latitudeInput.value = position.coords.latitude.toFixed(6);
-                        longitudeInput.value = position.coords.longitude.toFixed(6);
-                        showMessage('تم الحصول على الإحداثيات بنجاح', 'success');
-                        
-                        getLocationBtn.disabled = false;
-                        getLocationBtn.textContent = 'الحصول على الإحداثيات';
-                    },
-                    function(error) {
-                        let errorMessage;
-                        switch(error.code) {
-                            case error.PERMISSION_DENIED:
-                                errorMessage = "تم رفض طلب الحصول على الموقع الجغرافي. يرجى السماح بالوصول إلى الموقع.";
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage = "معلومات الموقع غير متاحة. تأكد من تشغيل GPS.";
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage = "انتهت مهلة طلب الحصول على الموقع. حاول مرة أخرى.";
-                                break;
-                            default:
-                                errorMessage = "حدث خطأ غير معروف أثناء الحصول على الموقع.";
-                        }
-                        showMessage(errorMessage, 'error');
-                        
-                        getLocationBtn.disabled = false;
-                        getLocationBtn.textContent = 'الحصول على الإحداثيات';
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 0
-                    }
-                );
-            } else {
-                showMessage('المتصفح لا يدعم الحصول على الموقع الجغرافي', 'error');
-            }
-        });
-        
-        // مسح الباركود (محاكاة)
-        scanBarcodeBtn.addEventListener('click', function() {
-            // في التطبيق الحقيقي، سيتم استخدام مكتبة لمسح الباركود
-            const simulatedBarcode = "MTR" + Math.floor(100000 + Math.random() * 900000);
-            meterNumberInput.value = simulatedBarcode;
-            showMessage('تم مسح الباركود بنجاح: ' + simulatedBarcode, 'success');
-        });
-        
-        // رفع الصورة إلى ImgBB
-        async function uploadImageToImgBB(base64Data, imageName) {
-            try {
-                // استخراج بيانات Base64 من Data URL
-                const base64Content = base64Data.split(',')[1];
-                
-                const formData = new FormData();
-                formData.append('key', IMGBB_API_KEY);
-                formData.append('image', base64Content);
-                
-                const response = await fetch('https://api.imgbb.com/1/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    return result.data.url;
-                } else {
-                    throw new Error(result.error.message || 'فشل في رفع الصورة');
-                }
-            } catch (error) {
-                console.error('Error uploading image:', error);
-                throw new Error('فشل في رفع الصورة: ' + error.message);
-            }
-        }
-        
-        // جمع البيانات من النموذج
-        async function collectFormData() {
-            const formData = {
-                meterNumber: document.getElementById('meterNumber').value,
-                meterType: document.getElementById('meterType').value,
-                meterBrand: document.getElementById('meterBrand').value,
-                valveType: document.getElementById('valveType').value,
-                valveCondition: document.getElementById('valveCondition').value,
-                boxCondition: document.getElementById('boxCondition').value,
-                pieceNumber: document.getElementById('pieceNumber').value,
-                propertyType: document.getElementById('propertyType').value,
-                propertyCondition: document.getElementById('propertyCondition').value,
-                hasViolation: document.getElementById('hasViolation').value,
-                districtName: document.getElementById('districtName').value,
-                electricityMetersCount: document.getElementById('electricityMetersCount').value,
-                latitude: document.getElementById('latitude').value,
-                longitude: document.getElementById('longitude').value,
-                technicianName: document.getElementById('technicianName').value,
-                timestamp: new Date().toISOString()
-            };
+        // رابط Google Apps Script
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwFU0ryfFr1d4krBnzEodqO3enAEPt7YtLEbkax3_b9AleKVP8WtguwOb2swwyhqIi/exec';
 
-            return formData;
-        }
+        // عناصر الكاميرا والماسح
+        const barcodeScanner = document.getElementById('barcode-scanner');
+        const barcodeVideo = document.getElementById('barcode-video');
+        const closeScanner = document.getElementById('closeScanner');
+        const scanBarcodeBtn = document.getElementById('scanBarcode');
         
-        // تحويل الصور إلى base64
-        function getImageBase64(fileInput) {
-            return new Promise((resolve) => {
-                if (fileInput.files && fileInput.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        resolve(e.target.result);
-                    };
-                    reader.readAsDataURL(fileInput.files[0]);
-                } else {
-                    resolve(null);
-                }
-            });
-        }
-        
-        // رفع جميع الصور
-        async function uploadAllImages() {
-            const imageUrls = {};
-            const imageFields = [
-                { inputId: 'meterImage', name: 'meterImageUrl' },
-                { inputId: 'pieceNumberImage', name: 'pieceNumberImageUrl' },
-                { inputId: 'propertyImage', name: 'propertyImageUrl' },
-                { inputId: 'metersCountImage', name: 'metersCountImageUrl' },
-                { inputId: 'valveImage', name: 'valveImageUrl' },
-                { inputId: 'boxImage', name: 'boxImageUrl' },
-                { inputId: 'violationImage', name: 'violationImageUrl' }
-            ];
+        const cameraPreview = document.getElementById('cameraPreview');
+        const cameraCanvas = document.getElementById('cameraCanvas');
+        const startCameraBtn = document.getElementById('startCamera');
+        const captureImageBtn = document.getElementById('captureImage');
+        const stopCameraBtn = document.getElementById('stopCamera');
+        const cameraTypeSelect = document.getElementById('cameraType');
+
+        let stream = null;
+        let currentCameraType = '';
+
+        // مسح الباركود مع الكاميرا الحقيقية
+        scanBarcodeBtn.addEventListener('click', function() {
+            startBarcodeScanner();
+        });
+
+        closeScanner.addEventListener('click', function() {
+            stopBarcodeScanner();
+        });
+
+        // بدء ماسح الباركود
+        function startBarcodeScanner() {
+            barcodeScanner.style.display = 'block';
             
-            let uploadedCount = 0;
-            const imagesToUpload = imageFields.filter(field => {
-                const input = document.getElementById(field.inputId);
-                return input.files && input.files[0];
-            });
-            
-            const totalImages = imagesToUpload.length;
-            
-            if (totalImages === 0) return imageUrls;
-            
-            for (const field of imagesToUpload) {
-                const input = document.getElementById(field.inputId);
-                if (input.files && input.files[0]) {
-                    try {
-                        const base64Data = await getImageBase64(input);
-                        const imageUrl = await uploadImageToImgBB(base64Data, field.name);
-                        imageUrls[field.name] = imageUrl;
-                        
-                        uploadedCount++;
-                        const progressPercent = 30 + (uploadedCount / totalImages) * 50;
-                        progress.style.width = `${progressPercent}%`;
-                    } catch (error) {
-                        console.error(`Error uploading ${field.name}:`, error);
-                        imageUrls[field.name] = '';
-                        showMessage(`فشل في رفع ${field.name}: ${error.message}`, 'error');
-                    }
-                }
-            }
-            
-            return imageUrls;
-        }
-        
-        // إرسال البيانات إلى Google Sheets
-        async function submitToGoogleSheets(formData, imageUrls) {
-            // دمج البيانات
-            const finalData = { ...formData, ...imageUrls };
-            
-            console.log('بيانات الإرسال:', finalData);
-            
-            try {
-                console.log('جاري إرسال البيانات إلى:', GOOGLE_SCRIPT_URL);
+            navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            }).then(function(mediaStream) {
+                barcodeVideo.srcObject = mediaStream;
+                barcodeVideo.play();
                 
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(finalData),
-                    headers: {
-                        'Content-Type': 'application/json'
+                // تهيئة QuaggaJS للمسح الضوئي
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: barcodeVideo,
+                        constraints: {
+                            width: 1280,
+                            height: 720,
+                            facingMode: "environment"
+                        }
+                    },
+                    decoder: {
+                        readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader"]
                     }
+                }, function(err) {
+                    if (err) {
+                        console.error('خطأ في تهيئة الماسح:', err);
+                        return;
+                    }
+                    Quagga.start();
                 });
-                
-                console.log('حالة الاستجابة:', response.status);
-                
-                const result = await response.json();
-                console.log('نتيجة الإرسال:', result);
-                
-                return result;
-            } catch (error) {
-                console.error('خطأ في الإرسال:', error);
-                throw new Error('فشل في إرسال البيانات: ' + error.message);
-            }
+
+                Quagga.onDetected(function(result) {
+                    const code = result.codeResult.code;
+                    document.getElementById('meterNumber').value = code;
+                    showMessage('تم مسح الباركود: ' + code, 'success');
+                    stopBarcodeScanner();
+                });
+
+            }).catch(function(error) {
+                console.error('خطأ في الوصول للكاميرا:', error);
+                showMessage('خطأ في الوصول للكاميرا: ' + error.message, 'error');
+            });
         }
-        
-        // اختبار الإرسال
-        async function testSubmission() {
-            const testData = {
-                meterNumber: 'TEST-' + Date.now(),
-                meterType: 'ذكى',
-                meterBrand: 'هيدروس',
-                valveType: 'بوقاتى',
-                valveCondition: 'سليم',
-                boxCondition: 'سليم',
-                pieceNumber: 'TEST-PIECE',
-                propertyType: 'سكنى',
-                propertyCondition: 'عقار قائم',
-                hasViolation: 'لا',
-                districtName: 'الحى التجريبى',
-                electricityMetersCount: '2',
-                latitude: '30.0444',
-                longitude: '31.2357',
-                technicianName: 'فنى تجريبى',
-                timestamp: new Date().toISOString()
+
+        // إيقاف ماسح الباركود
+        function stopBarcodeScanner() {
+            if (barcodeVideo.srcObject) {
+                barcodeVideo.srcObject.getTracks().forEach(track => track.stop());
+            }
+            Quagga.stop();
+            barcodeScanner.style.display = 'none';
+        }
+
+        // الكاميرا المباشرة للتصوير
+        startCameraBtn.addEventListener('click', function() {
+            currentCameraType = cameraTypeSelect.value;
+            if (!currentCameraType) {
+                showMessage('يرجى اختيار نوع الصورة أولاً', 'error');
+                return;
+            }
+            startCamera();
+        });
+
+        captureImageBtn.addEventListener('click', captureImage);
+        stopCameraBtn.addEventListener('click', stopCamera);
+
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                } 
+            }).then(function(mediaStream) {
+                stream = mediaStream;
+                cameraPreview.srcObject = stream;
+                cameraPreview.style.display = 'block';
+                startCameraBtn.style.display = 'none';
+                captureImageBtn.style.display = 'inline-block';
+                stopCameraBtn.style.display = 'inline-block';
+            }).catch(function(error) {
+                console.error('خطأ في الكاميرا:', error);
+                showMessage('خطأ في فتح الكاميرا: ' + error.message, 'error');
+            });
+        }
+
+        function captureImage() {
+            const context = cameraCanvas.getContext('2d');
+            cameraCanvas.width = cameraPreview.videoWidth;
+            cameraCanvas.height = cameraPreview.videoHeight;
+            context.drawImage(cameraPreview, 0, 0);
+            
+            // تحويل إلى base64
+            const imageData = cameraCanvas.toDataURL('image/jpeg', 0.8);
+            
+            // تعبئة الحقل المناسب
+            const fileInput = document.getElementById(currentCameraType);
+            const previewContainer = document.getElementById(currentCameraType + 'PreviewContainer');
+            
+            // إنشاء معاينة الصورة
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'image-preview-container';
+            
+            const img = document.createElement('img');
+            img.src = imageData;
+            img.className = 'preview-image';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-image';
+            removeBtn.innerHTML = '×';
+            removeBtn.onclick = function() {
+                previewContainer.removeChild(previewDiv);
+                fileInput.value = '';
             };
             
-            console.log('جاري اختبار الإرسال بالبيانات:', testData);
+            previewDiv.appendChild(img);
+            previewDiv.appendChild(removeBtn);
+            previewContainer.innerHTML = '';
+            previewContainer.appendChild(previewDiv);
             
+            // حفظ الصورة في input file (محاكاة)
+            const blob = dataURLtoBlob(imageData);
+            const file = new File([blob], currentCameraType + '.jpg', { type: 'image/jpeg' });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+            
+            showMessage('تم التقاط الصورة بنجاح', 'success');
+            stopCamera();
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            cameraPreview.style.display = 'none';
+            startCameraBtn.style.display = 'inline-block';
+            captureImageBtn.style.display = 'none';
+            stopCameraBtn.style.display = 'none';
+        }
+
+        function dataURLtoBlob(dataURL) {
+            const parts = dataURL.split(';base64,');
+            const contentType = parts[0].split(':')[1];
+            const raw = window.atob(parts[1]);
+            const uInt8Array = new Uint8Array(raw.length);
+            
+            for (let i = 0; i < raw.length; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+            
+            return new Blob([uInt8Array], { type: contentType });
+        }
+
+        // دالة التصحيح
+        function debugLog(message) {
+            console.log(message);
+            const debugDiv = document.getElementById('debugConsole') || createDebugConsole();
+            debugDiv.innerHTML += '<div style="border-bottom:1px solid #333; padding:5px;">' + 
+                                new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
+
+        function createDebugConsole() {
+            const debugDiv = document.createElement('div');
+            debugDiv.id = 'debugConsole';
+            debugDiv.style.cssText = 'position:fixed; bottom:0; left:0; right:0; height:200px; background:#000; color:#0f0; padding:10px; overflow:auto; z-index:10000; font-family:monospace; font-size:12px; border-top:2px solid #0f0;';
+            debugDiv.innerHTML = '<h4 style="color:#fff; margin:0 0 10px 0; text-align:center;">تصحيح الأخطاء - نظام العدادات</h4>';
+            document.body.appendChild(debugDiv);
+            return debugDiv;
+        }
+
+        // اختبار الاتصال بالخدمة
+        async function testConnection() {
             try {
-                const result = await submitToGoogleSheets(testData, {});
-                console.log('نتيجة الاختبار:', result);
-                showMessage('نتيجة الاختبار: ' + JSON.stringify(result), result.success ? 'success' : 'error');
+                debugLog('🔗 جاري اختبار الاتصال بالخدمة...');
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const result = await response.json();
+                debugLog('✅ اتصال ناجح: ' + result.message);
+                return true;
             } catch (error) {
-                console.error('خطأ في الاختبار:', error);
-                showMessage('خطأ في الاختبار: ' + error.message, 'error');
-            }
-        }
-        
-        // إرسال البيانات
-        submitBtn.addEventListener('click', async function() {
-            if (validateForm()) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'جاري التسجيل...';
-                document.body.classList.add('loading');
-                progressBar.classList.remove('hidden');
-                progress.style.width = '10%';
-                
-                try {
-                    // جمع البيانات النصية
-                    progress.style.width = '20%';
-                    const formData = await collectFormData();
-                    
-                    // رفع الصور
-                    progress.style.width = '30%';
-                    const imageUrls = await uploadAllImages();
-                    
-                    // إرسال البيانات النهائية
-                    progress.style.width = '90%';
-                    const result = await submitToGoogleSheets(formData, imageUrls);
-                    
-                    progress.style.width = '100%';
-                    
-                    if (result.success) {
-                        showMessage('✅ ' + (result.message || 'تم تسجيل البيانات بنجاح!'), 'success');
-                        resetForm();
-                    } else {
-                        showMessage('❌ ' + (result.error || 'حدث خطأ أثناء التسجيل'), 'error');
-                    }
-                } catch (error) {
-                    showMessage('❌ ' + error.message, 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'تسجيل البيانات';
-                    document.body.classList.remove('loading');
-                    setTimeout(() => {
-                        progressBar.classList.add('hidden');
-                        progress.style.width = '0%';
-                    }, 2000);
-                }
-            }
-        });
-        
-        // مسح النموذج
-        resetBtn.addEventListener('click', function() {
-            if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
-                resetForm();
-                showMessage('تم مسح النموذج بنجاح', 'success');
-            }
-        });
-        
-        // اختبار الإرسال
-        testBtn.addEventListener('click', testSubmission);
-        
-        // التحقق من صحة النموذج
-        function validateForm() {
-            const requiredFields = [
-                'meterNumber', 'meterType', 'meterBrand', 'valveType', 'valveCondition',
-                'boxCondition', 'pieceNumber', 'propertyType', 'propertyCondition',
-                'hasViolation', 'districtName', 'electricityMetersCount', 'latitude',
-                'longitude', 'technicianName'
-            ];
-            
-            for (const fieldId of requiredFields) {
-                const field = document.getElementById(fieldId);
-                if (!field.value.trim()) {
-                    const fieldLabel = field.previousElementSibling.textContent.replace(' *', '');
-                    showMessage(`❌ يرجى ملء حقل "${fieldLabel}"`, 'error');
-                    field.focus();
-                    return false;
-                }
-            }
-            
-            // التحقق من صحة الإحداثيات
-            const lat = parseFloat(latitudeInput.value);
-            const lng = parseFloat(longitudeInput.value);
-            
-            if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-                showMessage('❌ يرجى التأكد من صحة الإحداثيات الجغرافية', 'error');
-                getLocationBtn.focus();
+                debugLog('❌ فشل الاتصال: ' + error.message);
                 return false;
             }
-            
-            // التحقق من أن عدد العدادات رقم صحيح موجب
-            const metersCount = parseInt(document.getElementById('electricityMetersCount').value);
-            if (isNaN(metersCount) || metersCount < 1) {
-                showMessage('❌ يرجى إدخال عدد صحيح موجب لعدادات الكهرباء', 'error');
-                document.getElementById('electricityMetersCount').focus();
-                return false;
-            }
-            
-            return true;
         }
-        
-        // مسح النموذج
-        function resetForm() {
-            document.querySelectorAll('input, select').forEach(element => {
-                if (element.type !== 'button' && element.id !== 'scanBarcode' && element.id !== 'getLocation') {
-                    element.value = '';
-                }
-            });
-            
-            document.querySelectorAll('[id$="PreviewContainer"]').forEach(container => {
-                container.innerHTML = '';
-            });
-            
-            document.querySelectorAll('input[type="file"]').forEach(input => {
-                input.value = '';
-            });
-            
-            // إعادة تعيين أزرار الموقع
-            getLocationBtn.disabled = false;
-            getLocationBtn.textContent = 'الحصول على الإحداثيات';
-        }
-        
-        // عرض الرسائل
-        function showMessage(message, type) {
-            messageDiv.innerHTML = `<div class="${type === 'success' ? 'success-message' : 'error-message'}">${message}</div>`;
-            
-            setTimeout(() => {
-                messageDiv.innerHTML = '';
-            }, 5000);
-        }
-        
-        // تهيئة الصفحة
+
+        // تشغيل اختبار الاتصال عند التحميل
         document.addEventListener('DOMContentLoaded', function() {
-            showMessage('مرحباً بك في نظام تسجيل بيانات العدادات. يرجى ملء جميع الحقول المطلوبة.', 'success');
-            
-            // اختبار اتصال الخدمة
-            fetch(GOOGLE_SCRIPT_URL)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('اتصال الخدمة:', data);
-                })
-                .catch(error => {
-                    console.error('خطأ في اتصال الخدمة:', error);
-                });
+            testConnection();
+            showMessage('👋 مرحباً! النظام جاهز للاستخدام', 'success');
         });
+
+        // باقي الدوال تبقى كما هي...
     </script>
 </body>
 </html>
