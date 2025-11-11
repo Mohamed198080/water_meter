@@ -218,6 +218,11 @@
             font-size: 14px;
         }
         
+        .required::after {
+            content: " *";
+            color: var(--danger);
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -239,7 +244,7 @@
             <h2>بيانات العداد</h2>
             
             <div class="form-group">
-                <label for="meterNumber">رقم العداد *</label>
+                <label for="meterNumber" class="required">رقم العداد</label>
                 <input type="text" id="meterNumber" required>
                 
                 <div class="barcode-section">
@@ -249,7 +254,7 @@
             </div>
             
             <div class="form-group">
-                <label for="meterType">نوع العداد *</label>
+                <label for="meterType" class="required">نوع العداد</label>
                 <select id="meterType" required>
                     <option value="">اختر نوع العداد</option>
                     <option value="ذكى">ذكى</option>
@@ -258,7 +263,7 @@
             </div>
             
             <div class="form-group">
-                <label for="meterBrand">ماركة العداد *</label>
+                <label for="meterBrand" class="required">ماركة العداد</label>
                 <select id="meterBrand" required>
                     <option value="">اختر ماركة العداد</option>
                     <option value="هيدروس">هيدروس</option>
@@ -273,7 +278,7 @@
             <h2>بيانات المحبس والصندوق</h2>
             
             <div class="form-group">
-                <label for="valveType">نوع المحبس *</label>
+                <label for="valveType" class="required">نوع المحبس</label>
                 <select id="valveType" required>
                     <option value="">اختر نوع المحبس</option>
                     <option value="بوقاتى">بوقاتى</option>
@@ -282,7 +287,7 @@
             </div>
             
             <div class="form-group">
-                <label for="valveCondition">حالة المحبس *</label>
+                <label for="valveCondition" class="required">حالة المحبس</label>
                 <select id="valveCondition" required>
                     <option value="">اختر حالة المحبس</option>
                     <option value="يحتاج تغيير">يحتاج تغيير</option>
@@ -291,7 +296,7 @@
             </div>
             
             <div class="form-group">
-                <label for="boxCondition">حالة الصندوق *</label>
+                <label for="boxCondition" class="required">حالة الصندوق</label>
                 <select id="boxCondition" required>
                     <option value="">اختر حالة الصندوق</option>
                     <option value="يحتاج تغيير">يحتاج تغيير</option>
@@ -304,12 +309,12 @@
             <h2>بيانات العقار</h2>
             
             <div class="form-group">
-                <label for="pieceNumber">رقم القطعة *</label>
+                <label for="pieceNumber" class="required">رقم القطعة</label>
                 <input type="text" id="pieceNumber" required>
             </div>
             
             <div class="form-group">
-                <label for="propertyType">نوع العقار *</label>
+                <label for="propertyType" class="required">نوع العقار</label>
                 <select id="propertyType" required>
                     <option value="">اختر نوع العقار</option>
                     <option value="سكنى">سكنى</option>
@@ -320,7 +325,7 @@
             </div>
             
             <div class="form-group">
-                <label for="propertyCondition">حالة العقار *</label>
+                <label for="propertyCondition" class="required">حالة العقار</label>
                 <select id="propertyCondition" required>
                     <option value="">اختر حالة العقار</option>
                     <option value="عقار قائم">عقار قائم</option>
@@ -331,7 +336,7 @@
             </div>
             
             <div class="form-group">
-                <label for="hasViolation">يوجد تعدى *</label>
+                <label for="hasViolation" class="required">يوجد تعدى</label>
                 <select id="hasViolation" required>
                     <option value="">اختر حالة التعدي</option>
                     <option value="نعم">نعم</option>
@@ -340,12 +345,12 @@
             </div>
             
             <div class="form-group">
-                <label for="districtName">اسم الحى *</label>
+                <label for="districtName" class="required">اسم الحى</label>
                 <input type="text" id="districtName" required>
             </div>
             
             <div class="form-group">
-                <label for="electricityMetersCount">عدد عدادات الكهرباء *</label>
+                <label for="electricityMetersCount" class="required">عدد عدادات الكهرباء</label>
                 <input type="number" id="electricityMetersCount" min="1" required>
             </div>
         </div>
@@ -358,12 +363,12 @@
                 
                 <div class="coordinates">
                     <div>
-                        <label for="latitude">خط العرض (Latitude) *</label>
+                        <label for="latitude" class="required">خط العرض (Latitude)</label>
                         <input type="text" id="latitude" required readonly>
                     </div>
                     
                     <div>
-                        <label for="longitude">خط الطول (Longitude) *</label>
+                        <label for="longitude" class="required">خط الطول (Longitude)</label>
                         <input type="text" id="longitude" required readonly>
                     </div>
                 </div>
@@ -441,7 +446,7 @@
             <h2>بيانات الفني</h2>
             
             <div class="form-group">
-                <label for="technicianName">اسم الفني *</label>
+                <label for="technicianName" class="required">اسم الفني</label>
                 <input type="text" id="technicianName" required>
             </div>
         </div>
@@ -461,6 +466,9 @@
     <script>
         // API Key لـ ImgBB
         const IMGBB_API_KEY = '943880b0a24534cdb564d3ad6ea8f3a8';
+        
+        // رابط Google Apps Script
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxCF57iPgEHS2rrf0cS0GSGZO9JR9Qy3pjztrB7g8P24_P5cGt4W5C__OlTp3o-UE6VJQ/exec';
         
         // عناصر DOM
         const meterNumberInput = document.getElementById('meterNumber');
@@ -544,6 +552,7 @@
                         const removeBtn = document.createElement('button');
                         removeBtn.className = 'remove-image';
                         removeBtn.innerHTML = '×';
+                        removeBtn.title = 'حذف الصورة';
                         removeBtn.onclick = function() {
                             previewContainer.removeChild(previewDiv);
                             input.value = '';
@@ -579,16 +588,16 @@
                         let errorMessage;
                         switch(error.code) {
                             case error.PERMISSION_DENIED:
-                                errorMessage = "تم رفض طلب الحصول على الموقع الجغرافي";
+                                errorMessage = "تم رفض طلب الحصول على الموقع الجغرافي. يرجى السماح بالوصول إلى الموقع.";
                                 break;
                             case error.POSITION_UNAVAILABLE:
-                                errorMessage = "معلومات الموقع غير متاحة";
+                                errorMessage = "معلومات الموقع غير متاحة. تأكد من تشغيل GPS.";
                                 break;
                             case error.TIMEOUT:
-                                errorMessage = "انتهت مهلة طلب الحصول على الموقع";
+                                errorMessage = "انتهت مهلة طلب الحصول على الموقع. حاول مرة أخرى.";
                                 break;
                             default:
-                                errorMessage = "حدث خطأ غير معروف أثناء الحصول على الموقع";
+                                errorMessage = "حدث خطأ غير معروف أثناء الحصول على الموقع.";
                         }
                         showMessage(errorMessage, 'error');
                         
@@ -617,11 +626,14 @@
         // رفع الصورة إلى ImgBB
         async function uploadImageToImgBB(base64Data, imageName) {
             try {
-                const formData = new FormData();
-                const blob = await fetch(base64Data).then(r => r.blob());
-                formData.append('image', blob);
+                // استخراج بيانات Base64 من Data URL
+                const base64Content = base64Data.split(',')[1];
                 
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                const formData = new FormData();
+                formData.append('key', IMGBB_API_KEY);
+                formData.append('image', base64Content);
+                
+                const response = await fetch('https://api.imgbb.com/1/upload', {
                     method: 'POST',
                     body: formData
                 });
@@ -635,7 +647,7 @@
                 }
             } catch (error) {
                 console.error('Error uploading image:', error);
-                throw error;
+                throw new Error('فشل في رفع الصورة: ' + error.message);
             }
         }
         
@@ -692,14 +704,16 @@
             ];
             
             let uploadedCount = 0;
-            const totalImages = imageFields.filter(field => {
+            const imagesToUpload = imageFields.filter(field => {
                 const input = document.getElementById(field.inputId);
                 return input.files && input.files[0];
-            }).length;
+            });
+            
+            const totalImages = imagesToUpload.length;
             
             if (totalImages === 0) return imageUrls;
             
-            for (const field of imageFields) {
+            for (const field of imagesToUpload) {
                 const input = document.getElementById(field.inputId);
                 if (input.files && input.files[0]) {
                     try {
@@ -708,10 +722,12 @@
                         imageUrls[field.name] = imageUrl;
                         
                         uploadedCount++;
-                        progress.style.width = `${30 + (uploadedCount / totalImages) * 50}%`;
+                        const progressPercent = 30 + (uploadedCount / totalImages) * 50;
+                        progress.style.width = `${progressPercent}%`;
                     } catch (error) {
                         console.error(`Error uploading ${field.name}:`, error);
                         imageUrls[field.name] = '';
+                        showMessage(`فشل في رفع ${field.name}: ${error.message}`, 'error');
                     }
                 }
             }
@@ -724,28 +740,20 @@
             // دمج البيانات
             const finalData = { ...formData, ...imageUrls };
             
-            // هنا سيتم إرسال البيانات إلى Google Apps Script
-            // هذا جزء محاكاة - استبدله برابط Google Apps Script الفعلي
-            console.log('Data to be submitted:', finalData);
-            
-            // محاكاة الإرسال الناجح
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({ success: true, data: finalData });
-                }, 1000);
-            });
-            
-            // للاستخدام الفعلي، استخدم:
-            /*
-            const response = await fetch('YOUR_GOOGLE_APPS_SCRIPT_URL', {
-                method: 'POST',
-                body: JSON.stringify(finalData),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            return await response.json();
-            */
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(finalData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                throw new Error('فشل في إرسال البيانات إلى الخادم: ' + error.message);
+            }
         }
         
         // إرسال البيانات
@@ -773,13 +781,13 @@
                     progress.style.width = '100%';
                     
                     if (result.success) {
-                        showMessage('تم تسجيل البيانات بنجاح!', 'success');
+                        showMessage('✅ ' + (result.message || 'تم تسجيل البيانات بنجاح!'), 'success');
                         resetForm();
                     } else {
-                        showMessage('حدث خطأ أثناء التسجيل: ' + (result.error || 'غير معروف'), 'error');
+                        showMessage('❌ ' + (result.error || 'حدث خطأ أثناء التسجيل'), 'error');
                     }
                 } catch (error) {
-                    showMessage('حدث خطأ: ' + error.message, 'error');
+                    showMessage('❌ ' + error.message, 'error');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'تسجيل البيانات';
@@ -794,8 +802,10 @@
         
         // مسح النموذج
         resetBtn.addEventListener('click', function() {
-            resetForm();
-            showMessage('تم مسح النموذج', 'success');
+            if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+                resetForm();
+                showMessage('تم مسح النموذج بنجاح', 'success');
+            }
         });
         
         // التحقق من صحة النموذج
@@ -810,7 +820,8 @@
             for (const fieldId of requiredFields) {
                 const field = document.getElementById(fieldId);
                 if (!field.value.trim()) {
-                    showMessage(`يرجى ملء حقل ${field.previousElementSibling.textContent}`, 'error');
+                    const fieldLabel = field.previousElementSibling.textContent.replace(' *', '');
+                    showMessage(`❌ يرجى ملء حقل "${fieldLabel}"`, 'error');
                     field.focus();
                     return false;
                 }
@@ -821,7 +832,16 @@
             const lng = parseFloat(longitudeInput.value);
             
             if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-                showMessage('يرجى التأكد من صحة الإحداثيات الجغرافية', 'error');
+                showMessage('❌ يرجى التأكد من صحة الإحداثيات الجغرافية', 'error');
+                getLocationBtn.focus();
+                return false;
+            }
+            
+            // التحقق من أن عدد العدادات رقم صحيح موجب
+            const metersCount = parseInt(document.getElementById('electricityMetersCount').value);
+            if (isNaN(metersCount) || metersCount < 1) {
+                showMessage('❌ يرجى إدخال عدد صحيح موجب لعدادات الكهرباء', 'error');
+                document.getElementById('electricityMetersCount').focus();
                 return false;
             }
             
@@ -843,6 +863,10 @@
             document.querySelectorAll('input[type="file"]').forEach(input => {
                 input.value = '';
             });
+            
+            // إعادة تعيين أزرار الموقع
+            getLocationBtn.disabled = false;
+            getLocationBtn.textContent = 'الحصول على الإحداثيات';
         }
         
         // عرض الرسائل
