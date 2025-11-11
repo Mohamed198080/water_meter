@@ -223,6 +223,15 @@
             color: var(--danger);
         }
         
+        .test-btn {
+            background-color: #ff9800;
+            margin-top: 10px;
+        }
+        
+        .test-btn:hover {
+            background-color: #f57c00;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -454,6 +463,7 @@
         <div class="form-section">
             <button class="btn btn-success" id="submitBtn" style="width: 100%;">تسجيل البيانات</button>
             <button class="btn btn-danger" id="resetBtn" style="width: 100%; margin-top: 10px;">مسح النموذج</button>
+            <button class="btn test-btn" id="testBtn" style="width: 100%; margin-top: 10px;">اختبار الإرسال</button>
             
             <div class="progress-bar hidden" id="progressBar">
                 <div class="progress" id="progress"></div>
@@ -467,8 +477,8 @@
         // API Key لـ ImgBB
         const IMGBB_API_KEY = '943880b0a24534cdb564d3ad6ea8f3a8';
         
-        // رابط Google Apps Script
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxCF57iPgEHS2rrf0cS0GSGZO9JR9Qy3pjztrB7g8P24_P5cGt4W5C__OlTp3o-UE6VJQ/exec';
+        // رابط Google Apps Script الجديد
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxL2HzQFqSa-Q1WBkpx2fJfcJP3P9VgnWobNHVgEQMuCf-xw98YMC1XSGOfh4VYk1y1bw/exec';
         
         // عناصر DOM
         const meterNumberInput = document.getElementById('meterNumber');
@@ -478,6 +488,7 @@
         const longitudeInput = document.getElementById('longitude');
         const submitBtn = document.getElementById('submitBtn');
         const resetBtn = document.getElementById('resetBtn');
+        const testBtn = document.getElementById('testBtn');
         const messageDiv = document.getElementById('message');
         const progressBar = document.getElementById('progressBar');
         const progress = document.getElementById('progress');
@@ -740,7 +751,11 @@
             // دمج البيانات
             const finalData = { ...formData, ...imageUrls };
             
+            console.log('بيانات الإرسال:', finalData);
+            
             try {
+                console.log('جاري إرسال البيانات إلى:', GOOGLE_SCRIPT_URL);
+                
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(finalData),
@@ -749,10 +764,48 @@
                     }
                 });
                 
+                console.log('حالة الاستجابة:', response.status);
+                
                 const result = await response.json();
+                console.log('نتيجة الإرسال:', result);
+                
                 return result;
             } catch (error) {
-                throw new Error('فشل في إرسال البيانات إلى الخادم: ' + error.message);
+                console.error('خطأ في الإرسال:', error);
+                throw new Error('فشل في إرسال البيانات: ' + error.message);
+            }
+        }
+        
+        // اختبار الإرسال
+        async function testSubmission() {
+            const testData = {
+                meterNumber: 'TEST-' + Date.now(),
+                meterType: 'ذكى',
+                meterBrand: 'هيدروس',
+                valveType: 'بوقاتى',
+                valveCondition: 'سليم',
+                boxCondition: 'سليم',
+                pieceNumber: 'TEST-PIECE',
+                propertyType: 'سكنى',
+                propertyCondition: 'عقار قائم',
+                hasViolation: 'لا',
+                districtName: 'الحى التجريبى',
+                electricityMetersCount: '2',
+                latitude: '30.0444',
+                longitude: '31.2357',
+                technicianName: 'فنى تجريبى',
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log('جاري اختبار الإرسال بالبيانات:', testData);
+            
+            try {
+                const result = await submitToGoogleSheets(testData, {});
+                console.log('نتيجة الاختبار:', result);
+                showMessage('نتيجة الاختبار: ' + JSON.stringify(result), result.success ? 'success' : 'error');
+            } catch (error) {
+                console.error('خطأ في الاختبار:', error);
+                showMessage('خطأ في الاختبار: ' + error.message, 'error');
             }
         }
         
@@ -807,6 +860,9 @@
                 showMessage('تم مسح النموذج بنجاح', 'success');
             }
         });
+        
+        // اختبار الإرسال
+        testBtn.addEventListener('click', testSubmission);
         
         // التحقق من صحة النموذج
         function validateForm() {
@@ -881,6 +937,16 @@
         // تهيئة الصفحة
         document.addEventListener('DOMContentLoaded', function() {
             showMessage('مرحباً بك في نظام تسجيل بيانات العدادات. يرجى ملء جميع الحقول المطلوبة.', 'success');
+            
+            // اختبار اتصال الخدمة
+            fetch(GOOGLE_SCRIPT_URL)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('اتصال الخدمة:', data);
+                })
+                .catch(error => {
+                    console.error('خطأ في اتصال الخدمة:', error);
+                });
         });
     </script>
 </body>
