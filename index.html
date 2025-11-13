@@ -2,1041 +2,250 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#2E7D32">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>عدادات الكهرباء - الجوال</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسح عدادات المياه الذكية</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
     <style>
-        :root {
-            --primary: #2E7D32;
-            --secondary: #4CAF50;
-            --accent: #8BC34A;
-            --danger: #f44336;
-            --warning: #FF9800;
-            --info: #2196F3;
-            --light: #f5f5f5;
-            --dark: #1B5E20;
-            --text: #333333;
-            --border: #E0E0E0;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 0;
-            margin: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
-        
-        .app-container {
-            max-width: 100%;
-            min-height: 100vh;
-            background: white;
-            position: relative;
-        }
-        
-        /* الهيدر */
-        .app-header {
-            background: var(--primary);
+        .header {
+            background-color: #0d6efd;
             color: white;
-            padding: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .app-title {
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-        
-        .app-subtitle {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-        
-        /* التنقل بين الصفحات */
-        .nav-tabs {
-            display: flex;
-            background: var(--dark);
-            position: sticky;
-            top: 70px;
-            z-index: 99;
-        }
-        
-        .nav-tab {
-            flex: 1;
-            text-align: center;
-            padding: 12px 5px;
-            color: white;
-            text-decoration: none;
-            font-size: 0.85em;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-tab.active {
-            border-bottom-color: var(--accent);
-            background: rgba(255,255,255,0.1);
-        }
-        
-        .nav-tab i {
-            display: block;
-            font-size: 1.2em;
-            margin-bottom: 4px;
-        }
-        
-        /* المحتوى */
-        .page {
-            display: none;
-            padding: 15px;
-            padding-bottom: 80px;
-        }
-        
-        .page.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* البطاقات */
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border: 1px solid var(--border);
-        }
-        
-        .card-title {
-            font-size: 1.1em;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        /* حقول الإدخال */
-        .form-group {
+            padding: 15px 0;
             margin-bottom: 20px;
         }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text);
-            font-size: 0.95em;
-        }
-        
-        .required::after {
-            content: " *";
-            color: var(--danger);
-        }
-        
-        .form-input, .form-select {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border);
+        .form-container {
+            background-color: white;
             border-radius: 10px;
-            font-size: 16px;
-            background: white;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-        
-        /* الأزرار */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        
-        .btn:active {
-            transform: scale(0.98);
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-success {
-            background: var(--secondary);
-            color: white;
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-        
-        .btn-info {
-            background: var(--info);
-            color: white;
-        }
-        
-        /* الكاميرا والصور */
-        .camera-section {
-            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             padding: 20px;
+            margin-bottom: 20px;
         }
-        
         .camera-preview {
             width: 100%;
-            max-width: 300px;
-            height: 200px;
-            background: var(--light);
-            border: 2px dashed var(--border);
-            border-radius: 10px;
-            margin: 0 auto 15px;
-            display: none;
-            object-fit: cover;
-        }
-        
-        .captured-image {
-            width: 100%;
-            max-width: 200px;
-            height: 150px;
-            border-radius: 8px;
-            margin: 5px;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-        }
-        
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .image-item {
-            position: relative;
-        }
-        
-        .remove-image {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-        }
-        
-        /* الموقع */
-        .location-card {
-            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
-            border: 2px solid var(--info);
-        }
-        
-        .coordinates {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        
-        /* التقدم */
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: var(--border);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .progress {
-            height: 100%;
-            background: var(--secondary);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        /* الرسائل */
-        .message {
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 500;
-        }
-        
-        .message-success {
-            background: #E8F5E8;
-            color: var(--dark);
-            border: 1px solid var(--secondary);
-        }
-        
-        .message-error {
-            background: #FFEBEE;
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-        
-        /* التذييل */
-        .app-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid var(--border);
-            padding: 10px 15px;
+            height: 300px;
+            background-color: #f0f0f0;
+            border: 2px dashed #ccc;
             display: flex;
-            gap: 10px;
-            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
         }
-        
-        .footer-btn {
-            flex: 1;
-        }
-        
-        /* التحميل */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* التكيف مع الشاشات الصغيرة */
-        @media (max-width: 480px) {
-            .app-title {
-                font-size: 1.1em;
-            }
-            
-            .card {
-                padding: 15px;
-            }
-            
-            .btn {
-                padding: 14px 20px;
-            }
-            
-            .coordinates {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* تحسينات لللمس */
-        @media (hover: none) and (pointer: coarse) {
-            .form-input, .form-select, .btn {
-                font-size: 16px;
-            }
-            
-            .btn {
-                min-height: 44px;
-            }
+        .required::after {
+            content: " *";
+            color: red;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- الهيدر -->
-        <header class="app-header">
-            <div class="header-content">
-                <div>
-                    <div class="app-title">⚡ نظام العدادات</div>
-                    <div class="app-subtitle">لتسجيل بيانات عدادات الكهرباء</div>
+    <div class="header text-center">
+        <h1>نظام مسح عدادات المياه الذكية</h1>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <form id="meterForm">
+                <!-- رقم العداد -->
+                <div class="mb-3">
+                    <label for="meterNumber" class="form-label required">رقم العداد</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="meterNumber" required>
+                        <button type="button" class="btn btn-outline-secondary" id="scanBarcode">مسح الباركود</button>
+                    </div>
                 </div>
-            </div>
-        </header>
-        
-        <!-- التنقل -->
-        <nav class="nav-tabs">
-            <a href="#" class="nav-tab active" onclick="showPage('data-entry')">
-                <span>📝</span>
-                البيانات
-            </a>
-            <a href="#" class="nav-tab" onclick="showPage('camera')">
-                <span>📷</span>
-                الصور
-            </a>
-            <a href="#" class="nav-tab" onclick="showPage('location')">
-                <span>📍</span>
-                الموقع
-            </a>
-            <a href="#" class="nav-tab" onclick="showPage('submit')">
-                <span>✅</span>
-                الإرسال
-            </a>
-        </nav>
-        
-        <!-- صفحة إدخال البيانات -->
-        <section id="data-entry" class="page active">
-            <div class="card">
-                <div class="card-title">🔧 بيانات العداد</div>
-                
-                <div class="form-group">
-                    <label class="form-label required">رقم العداد</label>
-                    <input type="text" class="form-input" id="meterNumber" placeholder="أدخل رقم العداد">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">نوع العداد</label>
-                    <select class="form-select" id="meterType">
-                        <option value="">اختر النوع</option>
-                        <option value="ذكى">عداد ذكي</option>
-                        <option value="ميكانيكى">عداد ميكانيكي</option>
+
+                <!-- نوع العداد -->
+                <div class="mb-3">
+                    <label for="meterType" class="form-label required">نوع العداد</label>
+                    <select class="form-select" id="meterType" required>
+                        <option value="" selected disabled>اختر نوع العداد</option>
+                        <option value="ذكى">ذكى</option>
+                        <option value="ميكانيكى">ميكانيكى</option>
                     </select>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">ماركة العداد</label>
-                    <select class="form-select" id="meterBrand">
-                        <option value="">اختر الماركة</option>
+
+                <!-- ماركة العداد -->
+                <div class="mb-3">
+                    <label for="meterBrand" class="form-label required">ماركة العداد</label>
+                    <select class="form-select" id="meterBrand" required>
+                        <option value="" selected disabled>اختر ماركة العداد</option>
                         <option value="هيدروس">هيدروس</option>
                         <option value="سنسوس">سنسوس</option>
                         <option value="انتجرا">انتجرا</option>
-                        <option value="wadad">Wadad</option>
+                        <option value="wadad">wadad</option>
                     </select>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">🔩 المحبس والصندوق</div>
-                
-                <div class="form-group">
-                    <label class="form-label required">نوع المحبس</label>
-                    <select class="form-select" id="valveType">
-                        <option value="">اختر النوع</option>
-                        <option value="بوقاتى">بوقاتي</option>
-                        <option value="عادى">عادي</option>
+
+                <!-- نوع المحبس -->
+                <div class="mb-3">
+                    <label for="valveType" class="form-label required">نوع المحبس</label>
+                    <select class="form-select" id="valveType" required>
+                        <option value="" selected disabled>اختر نوع المحبس</option>
+                        <option value="بوقاتى">بوقاتى</option>
+                        <option value="عادى">عادى</option>
                     </select>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">حالة المحبس</label>
-                    <select class="form-select" id="valveCondition">
-                        <option value="">اختر الحالة</option>
+
+                <!-- حالة المحبس -->
+                <div class="mb-3">
+                    <label for="valveCondition" class="form-label required">حالة المحبس</label>
+                    <select class="form-select" id="valveCondition" required>
+                        <option value="" selected disabled>اختر حالة المحبس</option>
+                        <option value="يحتاج تغير">يحتاج تغير</option>
                         <option value="سليم">سليم</option>
-                        <option value="يحتاج تغيير">يحتاج تغيير</option>
                     </select>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">حالة الصندوق</label>
-                    <select class="form-select" id="boxCondition">
-                        <option value="">اختر الحالة</option>
+
+                <!-- حالة الصندوق -->
+                <div class="mb-3">
+                    <label for="boxCondition" class="form-label required">حالة الصندوق</label>
+                    <select class="form-select" id="boxCondition" required>
+                        <option value="" selected disabled>اختر حالة الصندوق</option>
+                        <option value="يحتاج تغير">يحتاج تغير</option>
                         <option value="سليم">سليم</option>
-                        <option value="يحتاج تغيير">يحتاج تغيير</option>
                     </select>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">🏠 بيانات العقار</div>
-                
-                <div class="form-group">
-                    <label class="form-label required">رقم القطعة</label>
-                    <input type="text" class="form-input" id="pieceNumber" placeholder="رقم القطعة العقارية">
+
+                <!-- رقم القطعة -->
+                <div class="mb-3">
+                    <label for="pieceNumber" class="form-label required">رقم القطعة</label>
+                    <input type="text" class="form-control" id="pieceNumber" required>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">نوع العقار</label>
-                    <select class="form-select" id="propertyType">
-                        <option value="">اختر النوع</option>
-                        <option value="سكنى">سكني</option>
-                        <option value="تجارى">تجاري</option>
-                        <option value="حكومى">حكومي</option>
+
+                <!-- نوع العقار -->
+                <div class="mb-3">
+                    <label for="propertyType" class="form-label required">نوع العقار</label>
+                    <select class="form-select" id="propertyType" required>
+                        <option value="" selected disabled>اختر نوع العقار</option>
+                        <option value="سكنى">سكنى</option>
+                        <option value="تجارى">تجارى</option>
+                        <option value="حكومى">حكومى</option>
                         <option value="VIP">VIP</option>
                     </select>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">حالة العقار</label>
-                    <select class="form-select" id="propertyCondition">
-                        <option value="">اختر الحالة</option>
+
+                <!-- حالة العقار -->
+                <div class="mb-3">
+                    <label for="propertyCondition" class="form-label required">حالة العقار</label>
+                    <select class="form-select" id="propertyCondition" required>
+                        <option value="" selected disabled>اختر حالة العقار</option>
                         <option value="عقار قائم">عقار قائم</option>
-                        <option value="ارض فضاء">أرض فضاء</option>
+                        <option value="ارض فضاء">ارض فضاء</option>
                         <option value="عقار مهدوم">عقار مهدوم</option>
-                        <option value="عقار تحت الانشاء">عقار تحت الإنشاء</option>
+                        <option value="عقار تحت الانشاء">عقار تحت الانشاء</option>
                     </select>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">يوجد تعدي</label>
-                    <select class="form-select" id="hasViolation">
-                        <option value="">اختر</option>
-                        <option value="لا">لا</option>
+
+                <!-- يوجد تعدى -->
+                <div class="mb-3">
+                    <label for="hasViolation" class="form-label required">يوجد تعدى</label>
+                    <select class="form-select" id="hasViolation" required>
+                        <option value="" selected disabled>اختر</option>
                         <option value="نعم">نعم</option>
+                        <option value="لا">لا</option>
                     </select>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">اسم الحي</label>
-                    <input type="text" class="form-input" id="districtName" placeholder="اسم الحي/المنطقة">
+
+                <!-- اسم الحى -->
+                <div class="mb-3">
+                    <label for="districtName" class="form-label required">اسم الحى</label>
+                    <input type="text" class="form-control" id="districtName" required>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label required">عدد عدادات الكهرباء</label>
-                    <input type="number" class="form-input" id="electricityMetersCount" min="1" value="1">
+
+                <!-- عدد عدادات الكهرباء -->
+                <div class="mb-3">
+                    <label for="electricMetersCount" class="form-label required">عدد عدادات الكهرباء</label>
+                    <input type="number" class="form-control" id="electricMetersCount" min="0" required>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">👤 بيانات الفني</div>
-                
-                <div class="form-group">
-                    <label class="form-label required">اسم الفني</label>
-                    <input type="text" class="form-input" id="technicianName" placeholder="اسم الفني المسؤول">
-                </div>
-            </div>
-        </section>
-        
-        <!-- صفحة الصور -->
-        <section id="camera" class="page">
-            <div class="card">
-                <div class="card-title">📷 التقاط الصور</div>
-                <p style="text-align: center; margin-bottom: 20px; color: #666;">
-                    يمكنك التقاط الصور المطلوبة مباشرة من الكاميرا
-                </p>
-                
-                <div class="camera-section">
-                    <video id="cameraPreview" class="camera-preview" autoplay playsinline></video>
-                    <canvas id="cameraCanvas" style="display: none;"></canvas>
-                    
-                    <select class="form-select" id="photoType" style="margin-bottom: 15px;">
-                        <option value="">اختر نوع الصورة</option>
-                        <option value="meterImage">صورة العداد</option>
-                        <option value="pieceNumberImage">صورة رقم القطعة</option>
-                        <option value="propertyImage">صورة العقار</option>
-                        <option value="valveImage">صورة المحبس</option>
-                        <option value="boxImage">صورة الصندوق</option>
-                        <option value="violationImage">صورة التعدي</option>
-                    </select>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <button class="btn btn-info" onclick="startCamera()">
-                            📸 فتح الكاميرا
-                        </button>
-                        <button class="btn btn-success" onclick="capturePhoto()" style="display: none;" id="captureBtn">
-                            ✅ التقاط
-                        </button>
+
+                <!-- الإحداثيات -->
+                <div class="mb-3">
+                    <label for="coordinates" class="form-label required">الإحداثيات</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="latitude" placeholder="خط العرض" readonly>
+                        <input type="text" class="form-control" id="longitude" placeholder="خط الطول" readonly>
+                        <button type="button" class="btn btn-outline-primary" id="getLocation">الحصول على الموقع</button>
                     </div>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">🖼️ الصور الملتقطة</div>
-                <div class="image-grid" id="capturedImages">
-                    <!-- الصور الملتقطة تظهر هنا -->
+
+                <!-- اسم الفنى -->
+                <div class="mb-3">
+                    <label for="technicianName" class="form-label required">اسم الفنى</label>
+                    <input type="text" class="form-control" id="technicianName" required>
                 </div>
-            </div>
-        </section>
-        
-        <!-- صفحة الموقع -->
-        <section id="location" class="page">
-            <div class="card location-card">
-                <div class="card-title">📍 الموقع الجغرافي</div>
-                <p style="text-align: center; margin-bottom: 20px; color: #666;">
-                    اضغط على الزر أدناه للحصول على الموقع الحالي تلقائياً
-                </p>
-                
-                <button class="btn btn-info" onclick="getCurrentLocation()">
-                    📍 الحصول على الموقع
-                </button>
-                
-                <div class="coordinates" style="margin-top: 20px;">
-                    <div class="form-group">
-                        <label class="form-label">خط العرض</label>
-                        <input type="text" class="form-input" id="latitude" readonly>
+
+                <!-- رفع الصور -->
+                <div class="mb-3">
+                    <h5>رفع الصور المطلوبة</h5>
+                    
+                    <div class="mb-2">
+                        <label for="meterImage" class="form-label">صورة العداد</label>
+                        <input type="file" class="form-control" id="meterImage" accept="image/*">
                     </div>
                     
-                    <div class="form-group">
-                        <label class="form-label">خط الطول</label>
-                        <input type="text" class="form-input" id="longitude" readonly>
+                    <div class="mb-2">
+                        <label for="pieceNumberImage" class="form-label">صورة رقم القطعة</label>
+                        <input type="file" class="form-control" id="pieceNumberImage" accept="image/*">
+                    </div>
+                    
+                    <div class="mb-2">
+                        <label for="propertyImage" class="form-label">صورة العقار</label>
+                        <input type="file" class="form-control" id="propertyImage" accept="image/*">
+                    </div>
+                    
+                    <div class="mb-2">
+                        <label for="electricMetersImage" class="form-label">صورة عدد عدادات الكهرباء</label>
+                        <input type="file" class="form-control" id="electricMetersImage" accept="image/*">
+                    </div>
+                    
+                    <div class="mb-2">
+                        <label for="valveImage" class="form-label">صورة المحبس</label>
+                        <input type="file" class="form-control" id="valveImage" accept="image/*">
+                    </div>
+                    
+                    <div class="mb-2">
+                        <label for="boxImage" class="form-label">صورة الصندوق</label>
+                        <input type="file" class="form-control" id="boxImage" accept="image/*">
+                    </div>
+                    
+                    <div class="mb-2">
+                        <label for="violationImage" class="form-label">صورة حالة التعدى</label>
+                        <input type="file" class="form-control" id="violationImage" accept="image/*">
                     </div>
                 </div>
-                
-                <div id="locationStatus" style="text-align: center; margin-top: 15px; font-size: 0.9em;"></div>
-            </div>
-        </section>
-        
-        <!-- صفحة الإرسال -->
-        <section id="submit" class="page">
-            <div class="card">
-                <div class="card-title">✅ مراجعة وإرسال</div>
-                
-                <div id="reviewData">
-                    <!-- البيانات المعاينة تظهر هنا -->
+
+                <!-- زر الإرسال -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">حفظ البيانات</button>
                 </div>
-                
-                <div class="progress-bar">
-                    <div class="progress" id="submitProgress"></div>
-                </div>
-                
-                <div class="loading" id="submitLoading">
-                    <div class="spinner"></div>
-                    <div>جاري حفظ البيانات...</div>
-                </div>
-                
-                <div id="submitMessage"></div>
-                
-                <button class="btn btn-success" onclick="submitAllData()">
-                    💾 حفظ في Google Sheets
-                </button>
-                
-                <button class="btn btn-warning" onclick="testSubmission()">
-                    🧪 اختبار سريع
-                </button>
-            </div>
-        </section>
-        
-        <!-- التذييل -->
-        <footer class="app-footer">
-            <button class="btn btn-primary footer-btn" onclick="showPage('data-entry')">
-                📝 بيانات
-            </button>
-            <button class="btn btn-primary footer-btn" onclick="showPage('camera')">
-                📷 صور
-            </button>
-            <button class="btn btn-primary footer-btn" onclick="showPage('location')">
-                📍 موقع
-            </button>
-            <button class="btn btn-success footer-btn" onclick="showPage('submit')">
-                ✅ إرسال
-            </button>
-        </footer>
+            </form>
+        </div>
     </div>
 
-    <script>
-        // الرابط الجديد لـ Google Apps Script
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyv1SFSQv1mtAcQ0VrjjcelGDNt5-Xw-Rb2z7NB3JbFTf-Y_G77nv8PFSAqzcNIKgTcQ/exec';
-        
-        let currentStream = null;
-        let capturedImages = {};
+    <!-- نافذة مسح الباركود -->
+    <div class="modal fade" id="barcodeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">مسح الباركود</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cameraPreview" class="camera-preview">
+                        <span>جاري تحميل الكاميرا...</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // إدارة الصفحات
-        function showPage(pageId) {
-            // إخفاء جميع الصفحات
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // إظهار الصفحة المطلوبة
-            document.getElementById(pageId).classList.add('active');
-            
-            // تحديث التبويبات
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
-            
-            // إذا كانت صفحة المراجعة، تحديث البيانات
-            if (pageId === 'submit') {
-                updateReviewData();
-            }
-        }
-
-        // الكاميرا
-        async function startCamera() {
-            const photoType = document.getElementById('photoType').value;
-            if (!photoType) {
-                showMessage('يرجى اختيار نوع الصورة أولاً', 'error');
-                return;
-            }
-            
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    } 
-                });
-                
-                currentStream = stream;
-                const preview = document.getElementById('cameraPreview');
-                preview.srcObject = stream;
-                preview.style.display = 'block';
-                document.getElementById('captureBtn').style.display = 'inline-block';
-                
-            } catch (error) {
-                showMessage('خطأ في فتح الكاميرا: ' + error.message, 'error');
-            }
-        }
-
-        function capturePhoto() {
-            const photoType = document.getElementById('photoType').value;
-            const preview = document.getElementById('cameraPreview');
-            const canvas = document.getElementById('cameraCanvas');
-            const context = canvas.getContext('2d');
-            
-            canvas.width = preview.videoWidth;
-            canvas.height = preview.videoHeight;
-            context.drawImage(preview, 0, 0);
-            
-            const imageData = canvas.toDataURL('image/jpeg', 0.8);
-            capturedImages[photoType] = imageData;
-            
-            // عرض الصورة الملتقطة
-            displayCapturedImage(photoType, imageData);
-            
-            // إيقاف الكاميرا
-            stopCamera();
-            
-            showMessage('تم التقاط الصورة بنجاح', 'success');
-        }
-
-        function stopCamera() {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-            }
-            document.getElementById('cameraPreview').style.display = 'none';
-            document.getElementById('captureBtn').style.display = 'none';
-        }
-
-        function displayCapturedImage(type, imageData) {
-            const imagesContainer = document.getElementById('capturedImages');
-            const imageItem = document.createElement('div');
-            imageItem.className = 'image-item';
-            
-            const imageName = getImageName(type);
-            
-            imageItem.innerHTML = `
-                <img src="${imageData}" class="captured-image" alt="${imageName}">
-                <button class="remove-image" onclick="removeImage('${type}')">×</button>
-                <div style="text-align: center; font-size: 0.8em; margin-top: 5px;">${imageName}</div>
-            `;
-            
-            imagesContainer.appendChild(imageItem);
-        }
-
-        function getImageName(type) {
-            const names = {
-                'meterImage': 'العداد',
-                'pieceNumberImage': 'رقم القطعة',
-                'propertyImage': 'العقار',
-                'valveImage': 'المحبس',
-                'boxImage': 'الصندوق',
-                'violationImage': 'التعدي'
-            };
-            return names[type] || type;
-        }
-
-        function removeImage(type) {
-            delete capturedImages[type];
-            updateCapturedImagesDisplay();
-        }
-
-        function updateCapturedImagesDisplay() {
-            const container = document.getElementById('capturedImages');
-            container.innerHTML = '';
-            
-            Object.keys(capturedImages).forEach(type => {
-                displayCapturedImage(type, capturedImages[type]);
-            });
-        }
-
-        // الموقع
-        function getCurrentLocation() {
-            const statusDiv = document.getElementById('locationStatus');
-            statusDiv.innerHTML = 'جاري تحديد الموقع...';
-            
-            if (!navigator.geolocation) {
-                statusDiv.innerHTML = 'المتصفح لا يدعم تحديد الموقع';
-                return;
-            }
-            
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const lat = position.coords.latitude.toFixed(6);
-                    const lng = position.coords.longitude.toFixed(6);
-                    
-                    document.getElementById('latitude').value = lat;
-                    document.getElementById('longitude').value = lng;
-                    
-                    statusDiv.innerHTML = `✅ تم تحديد الموقع: ${lat}, ${lng}`;
-                    statusDiv.style.color = 'green';
-                },
-                function(error) {
-                    let errorMsg = 'فشل في تحديد الموقع: ';
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMsg += 'تم رفض الإذن';
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMsg += 'الموقع غير متاح';
-                            break;
-                        case error.TIMEOUT:
-                            errorMsg += 'انتهت المهلة';
-                            break;
-                        default:
-                            errorMsg += 'خطأ غير معروف';
-                    }
-                    statusDiv.innerHTML = errorMsg;
-                    statusDiv.style.color = 'red';
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 15000,
-                    maximumAge: 0
-                }
-            );
-        }
-
-        // المراجعة والإرسال
-        function updateReviewData() {
-            const reviewDiv = document.getElementById('reviewData');
-            let html = '';
-            
-            // البيانات الأساسية
-            const fields = [
-                { id: 'meterNumber', label: 'رقم العداد' },
-                { id: 'meterType', label: 'نوع العداد' },
-                { id: 'meterBrand', label: 'ماركة العداد' },
-                { id: 'valveType', label: 'نوع المحبس' },
-                { id: 'valveCondition', label: 'حالة المحبس' },
-                { id: 'boxCondition', label: 'حالة الصندوق' },
-                { id: 'pieceNumber', label: 'رقم القطعة' },
-                { id: 'propertyType', label: 'نوع العقار' },
-                { id: 'propertyCondition', label: 'حالة العقار' },
-                { id: 'hasViolation', label: 'يوجد تعدي' },
-                { id: 'districtName', label: 'اسم الحي' },
-                { id: 'electricityMetersCount', label: 'عدد العدادات' },
-                { id: 'latitude', label: 'خط العرض' },
-                { id: 'longitude', label: 'خط الطول' },
-                { id: 'technicianName', label: 'اسم الفني' }
-            ];
-            
-            fields.forEach(field => {
-                const value = document.getElementById(field.id).value || 'غير محدد';
-                html += `<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px;">
-                    <span style="font-weight: 500;">${field.label}:</span>
-                    <span>${value}</span>
-                </div>`;
-            });
-            
-            // الصور
-            const imageCount = Object.keys(capturedImages).length;
-            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px;">
-                <span style="font-weight: 500;">عدد الصور:</span>
-                <span>${imageCount}</span>
-            </div>`;
-            
-            reviewDiv.innerHTML = html;
-        }
-
-        async function submitAllData() {
-            const loadingDiv = document.getElementById('submitLoading');
-            const progressBar = document.getElementById('submitProgress');
-            const messageDiv = document.getElementById('submitMessage');
-            
-            // التحقق من البيانات المطلوبة
-            const requiredFields = ['meterNumber', 'meterType', 'technicianName'];
-            for (const field of requiredFields) {
-                if (!document.getElementById(field).value) {
-                    showMessage(`يرجى ملء حقل ${field}`, 'error', messageDiv);
-                    return;
-                }
-            }
-            
-            // إظهار التحميل
-            loadingDiv.style.display = 'block';
-            progressBar.style.width = '30%';
-            
-            try {
-                // تجميع البيانات
-                const formData = {
-                    meterNumber: document.getElementById('meterNumber').value,
-                    meterType: document.getElementById('meterType').value,
-                    meterBrand: document.getElementById('meterBrand').value,
-                    valveType: document.getElementById('valveType').value,
-                    valveCondition: document.getElementById('valveCondition').value,
-                    boxCondition: document.getElementById('boxCondition').value,
-                    pieceNumber: document.getElementById('pieceNumber').value,
-                    propertyType: document.getElementById('propertyType').value,
-                    propertyCondition: document.getElementById('propertyCondition').value,
-                    hasViolation: document.getElementById('hasViolation').value,
-                    districtName: document.getElementById('districtName').value,
-                    electricityMetersCount: document.getElementById('electricityMetersCount').value,
-                    latitude: document.getElementById('latitude').value,
-                    longitude: document.getElementById('longitude').value,
-                    technicianName: document.getElementById('technicianName').value,
-                    timestamp: new Date().toISOString(),
-                    ...capturedImages
-                };
-                
-                progressBar.style.width = '60%';
-                
-                // الإرسال
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                progressBar.style.width = '90%';
-                
-                if (!response.ok) {
-                    throw new Error(`خطأ في الاستجابة: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                progressBar.style.width = '100%';
-                
-                if (result.success) {
-                    showMessage(`✅ ${result.message}`, 'success', messageDiv);
-                    // إعادة تعيين النموذج بعد نجاح الحفظ
-                    setTimeout(() => {
-                        resetForm();
-                        showPage('data-entry');
-                    }, 2000);
-                } else {
-                    showMessage(`❌ ${result.error}`, 'error', messageDiv);
-                }
-                
-            } catch (error) {
-                showMessage(`❌ خطأ في الإرسال: ${error.message}`, 'error', messageDiv);
-            } finally {
-                loadingDiv.style.display = 'none';
-                setTimeout(() => {
-                    progressBar.style.width = '0%';
-                }, 1000);
-            }
-        }
-
-        async function testSubmission() {
-            const testData = {
-                meterNumber: 'TEST-' + Date.now(),
-                meterType: 'ذكى',
-                meterBrand: 'هيدروس',
-                technicianName: 'اختبار جوال',
-                timestamp: new Date().toISOString()
-            };
-            
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(testData)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showMessage(`✅ الاختبار ناجح: ${result.message}`, 'success', document.getElementById('submitMessage'));
-                } else {
-                    showMessage(`❌ فشل الاختبار: ${result.error}`, 'error', document.getElementById('submitMessage'));
-                }
-                
-            } catch (error) {
-                showMessage(`❌ خطأ في الاختبار: ${error.message}`, 'error', document.getElementById('submitMessage'));
-            }
-        }
-
-        function resetForm() {
-            // مسح جميع الحقول
-            document.querySelectorAll('input, select').forEach(input => {
-                if (input.type !== 'button') {
-                    input.value = '';
-                }
-            });
-            
-            // إعادة تعيين القيم الافتراضية
-            document.getElementById('electricityMetersCount').value = '1';
-            document.getElementById('hasViolation').value = 'لا';
-            
-            // مسح الصور
-            capturedImages = {};
-            updateCapturedImagesDisplay();
-            
-            showMessage('تم مسح النموذج بنجاح', 'success');
-        }
-
-        function showMessage(message, type, container = null) {
-            const messageDiv = container || document.getElementById('submitMessage');
-            const className = type === 'error' ? 'message-error' : 'message-success';
-            messageDiv.innerHTML = `<div class="message ${className}">${message}</div>`;
-        }
-
-        // التهيئة
-        document.addEventListener('DOMContentLoaded', function() {
-            // تعيين القيم الافتراضية
-            document.getElementById('hasViolation').value = 'لا';
-            
-            // إضافة تأثيرات لللمس
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.addEventListener('touchstart', function() {
-                    this.style.transform = 'scale(0.98)';
-                });
-                
-                btn.addEventListener('touchend', function() {
-                    this.style.transform = 'scale(1)';
-                });
-            });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
-
